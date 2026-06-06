@@ -1,51 +1,37 @@
-# First Level Heading
-
-Paragraph.
-
-## Second Level Heading
-
-Paragraph.
-
-- bullet
-+ other bullet
-* another bullet
-    * child bullet
-
-1. ordered
-2. next ordered
-
-### Third Level Heading
-
-Some *italic* and **bold** text and `inline code`.
-
-An empty line starts a new paragraph.
-
-Use two spaces at the end  
-to force a line break.
-
-A horizontal ruler follows:
+# 🏥 AXON HMS
+**Hospital Management System** — 2nd Semester Project
 
 ---
 
-Add links inline like [this link to the Qt homepage](https://www.qt.io),
-or with a reference like [this other link to the Qt homepage][1].
+## 📌 About
+AXON HMS is a hospital management system built as a 2nd semester academic project. It aims to simplify core hospital operations like patient registration, appointment scheduling, and basic record management.
 
-    Add code blocks with
-    four spaces at the front.
+---
 
-> A blockquote
-> starts with >
->
-> and has the same paragraph rules as normal text.
+## 👥 Team Members
 
-First Level Heading in Alternate Style
-======================================
+| Name | Role |
+|------|------|
+| Ankit Sigdel | Team Lead & System Architect |
+| Sudarshan Rijal | UI/UX Designer & Presentation |
+| Pranjal Upadhyay | Database Designer & Testing/QA |
+| Princu Thapa | Documentation & Research |
 
-Paragraph.
+> **Supervisor:** Bipesh Raj Subedi
 
-Second Level Heading in Alternate Style
----------------------------------------
+---
 
-Paragraph.
+## 🛠 Tools & Technologies
 
-[1]: https://www.qt.io
+- **UI Design:** Qt Framework
+- **Documentation:** Microsoft Word / Google Docs
+- **Presentation:** PowerPoint / Google Slides / Canva
+
+---
+
+## 📄 License
+This project is for academic purposes only.
+
+---
+
+<p align="center">Made with ❤️ by Team AXON · 2nd Semester · CE · Kathmandu University · 2026</p>
