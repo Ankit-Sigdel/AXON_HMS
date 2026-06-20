@@ -85,7 +85,7 @@ QPushButton#btnOverview:checked, QPushButton#btnManagerStaff:checked, QPushButto
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="resources.qrc">:/images/axonlogo.png</pixmap>
+         <pixmap resource="resources.qrc">:/images/axonimg.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -137,7 +137,7 @@ QPushButton#btnOverview:checked, QPushButton#btnManagerStaff:checked, QPushButto
         <property name="sizeHint" stdset="0">
          <size>
           <width>20</width>
-          <height>352</height>
+          <height>349</height>
          </size>
         </property>
        </spacer>
