@@ -334,7 +334,7 @@ adminwindow::adminwindow(const QString &employeeName, QWidget *parent)
 {
     ui->setupUi(this);
 
-    this->setWindowTitle("AXON-HMS: Doctor Dashboard");
+    this->setWindowTitle("AXON-HMS: Admin's Dashboard");
 
     // Sidebar exclusive button group
     QButtonGroup *sidebarGroup = new QButtonGroup(this);
