@@ -24,6 +24,8 @@ private slots:
 
     // Action Buttons
     void onViewAllAppointmentsClicked();
+    void onClearFormClicked();
+    void onSubmitRegistrationClicked();
 
 private:
     Ui::ReceptionistWindow *ui;
