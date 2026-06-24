@@ -36,7 +36,7 @@ void StaffManager::_parseStream(QTextStream &in) {
         if (line.isEmpty() || line.startsWith("#")) continue;
 
         QStringList f = line.split(",");
-        // Format: username,password,Role,staff_id,full_name,age,gender,phone
+        // Format: username,password,Role,staff_id,full_name,age,gender,phone,status
         if (f.size() >= 8) {
             StaffData s;
             s.username = f[0].trimmed();
@@ -47,6 +47,7 @@ void StaffManager::_parseStream(QTextStream &in) {
             s.age      = f[5].trimmed();
             s.gender   = f[6].trimmed();
             s.phone    = f[7].trimmed();
+            s.status   = (f.size() >= 9) ? f[8].trimmed() : "On Duty";
             staffList.append(s);
         }
     }
@@ -59,7 +60,7 @@ void StaffManager::saveAll() {
         return;
     }
     QTextStream out(&file);
-    out << "# username,password,Role,staff_id,full_name,age,gender,phone\n";
+    out << "# username,password,Role,staff_id,full_name,age,gender,phone,status\n";
     for (const auto &s : staffList) {
         out << s.username << ","
             << s.password << ","
@@ -68,7 +69,8 @@ void StaffManager::saveAll() {
             << s.name     << ","
             << s.age      << ","
             << s.gender   << ","
-            << s.phone    << "\n";
+            << s.phone    << ","
+            << s.status   << "\n";
     }
     file.close();
 }

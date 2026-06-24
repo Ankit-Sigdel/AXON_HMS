@@ -13,11 +13,25 @@ void PatientManager::loadAll() {
 
     QFile file("patient_database.csv");
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug() << "PatientManager: patient_database.csv not found, starting fresh.";
+        // Fallback: try the embedded resource (read-only, used as seed)
+        QFile res(":/database/patient_database.csv");
+        if (!res.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            qDebug() << "PatientManager: patient_database.csv not found anywhere.";
+            return;
+        }
+        QTextStream in(&res);
+        _parseStream(in);
+        res.close();
+        saveAll(); // write out to working directory so future edits persist
         return;
     }
 
     QTextStream in(&file);
+    _parseStream(in);
+    file.close();
+}
+
+void PatientManager::_parseStream(QTextStream &in) {
     while (!in.atEnd()) {
         QString line = in.readLine().trimmed();
         if (line.isEmpty() || line.startsWith("#")) continue;
@@ -36,7 +50,6 @@ void PatientManager::loadAll() {
             patientList.append(p);
         }
     }
-    file.close();
 }
 
 // Rewrites the entire CSV from the in-memory vector (used after any mutation)
