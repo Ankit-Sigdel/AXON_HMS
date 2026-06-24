@@ -3,11 +3,12 @@
 
 #include <QWidget> // Matches the root widget type generated from doctorwindow.ui ("Form")
 #include <QTimer>
+#include <QMainWindow>
 #include "doctor.h"
 
 namespace Ui
 {
-class AXON_DOCTOR; // doctorwindow.ui's <class> tag is "DoctorForm"
+class AXON_DOCTOR; // doctorwindow.ui's <class> tag is "AXON_DOCTOR"
 };
 
 class doctorwindow : public QWidget
@@ -20,6 +21,8 @@ public:
 
 private slots:
     void updateDateTime();
+    void switchPage();
+    void logout();
 
 private:
     Ui::AXON_DOCTOR *ui;
