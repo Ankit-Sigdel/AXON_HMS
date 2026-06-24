@@ -16,6 +16,7 @@ struct StaffData {
     QString age;
     QString gender;
     QString phone;
+    QString status;
 };
 
 class StaffManager

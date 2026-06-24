@@ -4,6 +4,7 @@
 #include <QVector>
 #include <QString>
 #include "patient.h"
+#include <QTextStream>
 
 // Manages the patient roster with file-backed CSV persistence.
 // Sits between Doctor / Receptionist and the actual patient data.
@@ -30,6 +31,7 @@ private:
     QVector<Patient> patientList;
     void saveAll(); // rewrites patient_database.csv from patientList
     void loadAll(); // reads patient_database.csv into patientList
+    void _parseStream(QTextStream &in);
 };
 
 #endif // PATIENTMANAGER_H

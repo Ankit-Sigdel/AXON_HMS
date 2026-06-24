@@ -19,6 +19,10 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/images/AXON_Monogram.png</normaloff>:/images/AXON_Monogram.png</iconset>
+  </property>
   <property name="styleSheet">
    <string notr="true">/* 1. Sidebar Background - Light Beige */
 QFrame#sidebarFrame {

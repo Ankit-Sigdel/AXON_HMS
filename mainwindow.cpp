@@ -103,9 +103,12 @@ void MainWindow::on_loginButton_clicked()
         return;
     }
 
-    QFile file(":/database/staff_database.csv");
+    QFile file("staff_database.csv");
+    if (!file.exists()) {
+        file.setFileName(":/database/staff_database.csv");
+    }
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QMessageBox::critical(this, "Error", "Database file not found.");
+        QMessageBox::warning(this, "Error", "Database file not found.");
         return;
     }
 
