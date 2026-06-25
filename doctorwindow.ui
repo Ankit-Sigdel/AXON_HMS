@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AXON_DOCTOR</class>
- <widget class="QWidget" name="AXON_DOCTOR">
+ <class>doctorwindow</class>
+ <widget class="QWidget" name="doctorwindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -114,7 +114,7 @@ QPushButton#scheduleBtn:checked {
 }</string>
        </property>
        <property name="text">
-        <string>Welcome, Doctor!</string>
+        <string>Welcome!</string>
        </property>
       </widget>
      </item>
@@ -141,13 +141,13 @@ QPushButton#scheduleBtn:checked {
        </property>
        <property name="minimumSize">
         <size>
-         <width>141</width>
+         <width>200</width>
          <height>31</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>141</width>
+         <width>200</width>
          <height>31</height>
         </size>
        </property>
@@ -292,7 +292,95 @@ QPushButton::menu-indicator{
        <height>651</height>
       </rect>
      </property>
-     <widget class="QWidget" name="pageOverview"/>
+     <widget class="QWidget" name="pageOverview">
+      <widget class="QWidget" name="headerWidget" native="true">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>411</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="lblWelcome">
+          <property name="font">
+           <font>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">Q,Label#lblWelcome{
+		background-color: transparent;
+		font-size: 24 px;
+		color: #334155;
+}</string>
+          </property>
+          <property name="text">
+           <string>Good morning, Dr. </string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="statsContainer" native="true">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>90</y>
+         <width>731</width>
+         <height>201</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QListWidget" name="patientListWidget">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>320</y>
+         <width>601</width>
+         <height>321</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QTableWidget" name="appointmentsTable">
+       <property name="geometry">
+        <rect>
+         <x>640</x>
+         <y>320</y>
+         <width>431</width>
+         <height>321</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lblPatientsTitle">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>330</y>
+         <width>321</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lblAppointmentsTtitle">
+       <property name="geometry">
+        <rect>
+         <x>650</x>
+         <y>330</y>
+         <width>311</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </widget>
      <widget class="QWidget" name="pagePatient"/>
      <widget class="QWidget" name="pageScheduling"/>
     </widget>
@@ -361,7 +449,7 @@ QFrame#sideBarFrame {
      </font>
     </property>
     <property name="text">
-     <string>           Schedule</string>
+     <string>      Schedule</string>
     </property>
    </widget>
    <widget class="QLabel" name="logoLabel">
@@ -400,7 +488,7 @@ QFrame#sideBarFrame {
      </font>
     </property>
     <property name="text">
-     <string>          Overview</string>
+     <string>     Overview</string>
     </property>
    </widget>
    <widget class="QPushButton" name="patientlistBtn">
@@ -420,7 +508,7 @@ QFrame#sideBarFrame {
      </font>
     </property>
     <property name="text">
-     <string>          Patient List</string>
+     <string>     Patient List</string>
     </property>
    </widget>
   </widget>

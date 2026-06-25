@@ -8,7 +8,7 @@
 
 namespace Ui
 {
-class AXON_DOCTOR; // doctorwindow.ui's <class> tag is "AXON_DOCTOR"
+class doctorwindow;
 };
 
 class doctorwindow : public QWidget
@@ -23,9 +23,11 @@ private slots:
     void updateDateTime();
     void switchPage();
     void logout();
+    void setupOverviewPage();
+    void setupStatsSection();
 
 private:
-    Ui::AXON_DOCTOR *ui;
+    Ui::doctorwindow *ui;
     Doctor *doctorBackend;
     QString currentUserName;
     QTimer *timer;
