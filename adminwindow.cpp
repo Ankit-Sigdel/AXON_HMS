@@ -409,7 +409,7 @@ void adminwindow::on_btnMenu_clicked()
     }
 }
 
-void adminwindow::on_btnOverview_clicked()     { if (ui->stackedWidget) ui->stackedWidget->setCurrentIndex(0); }
+void adminwindow::on_btnOverview_clicked()     { if (ui->stackedWidget) ui->stackedWidget->setCurrentIndex(0);  initDashboardGraphs();}
 void adminwindow::on_btnStaffManager_clicked() { if (ui->stackedWidget) ui->stackedWidget->setCurrentIndex(1); }
 void adminwindow::on_btnScheduling_clicked()   { QDesktopServices::openUrl(QUrl("https://calendar.google.com/calendar/u/0/r")); }
 
@@ -730,6 +730,7 @@ void adminwindow::setupStaffPage()
 
     // Populate from backend
     refreshStaffTable();
+    initDashboardGraphs();
 
     // Connect Add button
     connect(btnAdd, &QPushButton::clicked, this, &adminwindow::onAddStaffClicked);
@@ -838,6 +839,7 @@ void adminwindow::addStaffRow(const StaffData &s)
 
             if (staffMgr->updateStaff(current)) {
                 refreshStaffTable();
+                initDashboardGraphs();
             }
         }
     });
@@ -853,6 +855,7 @@ void adminwindow::addStaffRow(const StaffData &s)
         if (reply == QMessageBox::Yes) {
             staffMgr->removeStaff(staffIdCopy);
             refreshStaffTable();
+            initDashboardGraphs();
         }
     });
 
@@ -903,6 +906,7 @@ void adminwindow::onAddStaffClicked()
 
     staffMgr->addStaff(newStaff);
     refreshStaffTable();
+    initDashboardGraphs();
 
     QMessageBox::information(this, "Staff Added",
         QString("Staff member <b>%1</b> added successfully.<br>"
