@@ -1,4 +1,5 @@
 #include "receptionistwindow.h"
+#include "mainwindow.h"
 #include "ui_receptionistwindow.h" // Generated automatically by Qt
 #include <QDebug>
 #include <QHBoxLayout>
@@ -9,6 +10,8 @@
 #include <QMessageBox>
 #include <QDir>
 #include <QFileInfo>
+#include <QMenu>
+#include <QAction>
 ReceptionistWindow::ReceptionistWindow(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::ReceptionistWindow)
@@ -21,6 +24,51 @@ ReceptionistWindow::ReceptionistWindow(QWidget *parent)
 
     // 2. Load data onto the screen
     refreshDashboardData();
+    // 1. Create the menu
+    QMenu *profileMenu = new QMenu(this);
+
+    // NOTE: This line is crucial for rounded corners on Windows so you don't get black boxes in the corners
+    profileMenu->setAttribute(Qt::WA_TranslucentBackground);
+
+    // 2. Apply the exact visual styling from the screenshot
+    profileMenu->setStyleSheet(
+        "QMenu {"
+        "   background-color: white;"
+        "   border: 1px solid #d3d3d3;"
+        "   border-radius: 8px;"           /* Rounded corners */
+        "   padding: 6px 0px;"             /* Spacing at top and bottom */
+        "}"
+        "QMenu::item {"
+        "   color: #0055a4;"               /* The specific blue text color */
+        "   padding: 8px 35px 8px 20px;"   /* Spacing around the word Logout */
+        "   font-size: 14px;"
+        "   background-color: transparent;"
+        "}"
+        "QMenu::item:selected {"
+        "   background-color: #f0f0f0;"    /* Light grey when you hover over 'Logout' */
+        "   border-radius: 4px;"
+        "}"
+        );
+
+    // 3. Create the Action
+    QAction *logoutAction = new QAction("Logout", this);
+    profileMenu->addAction(logoutAction);
+
+    // 4. Attach menu to the button from your UI
+    ui->profileMenuButton->setMenu(profileMenu);
+    ui->profileMenuButton->setPopupMode(QToolButton::InstantPopup);
+
+    // 5. Connect the click event
+
+        connect(logoutAction, &QAction::triggered, this, [=]() {
+            // 1. Create and show the main login dashboard
+            MainWindow *loginWindow = new MainWindow();
+            loginWindow->show();
+
+            // 2. Close this receptionist window
+            this->close();
+        });
+
 }
 
 ReceptionistWindow::~ReceptionistWindow()
