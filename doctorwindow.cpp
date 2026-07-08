@@ -15,7 +15,7 @@
 doctorwindow::doctorwindow(const QString &employeeName, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::doctorwindow),
-    currentUserName(employeeName) // Initialize your member variable
+    currentUserName(employeeName)
 {
     ui->setupUi(this);
     if (ui->message)

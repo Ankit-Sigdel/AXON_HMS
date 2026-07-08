@@ -32,17 +32,6 @@
 #include <QWebEngineView>
 #include <QUrl>
 
-// NOTE: EditPatientDialog, AddStaffDialog, and EditStaffDialog used to be
-// QDialog subclasses defined right here. They have been replaced with plain
-// factory functions:
-//   createEditPatientDialog()  ->  patientmanager.cpp / patientmanager.h
-//   createAddStaffDialog()     ->  staffmanager.cpp   / staffmanager.h
-//   createEditStaffDialog()    ->  staffmanager.cpp   / staffmanager.h
-// Each builds and returns a QDialog* and hands the editable widgets back
-// via reference out-parameters so the caller can read values after exec().
-
-
-// ── Shared chart helper ──────────────────────────────────────────────────────
 
 static void embedChart(QWidget *container, QChart *chart) {
     if (!container || !chart) return;
@@ -67,7 +56,7 @@ static void embedChart(QWidget *container, QChart *chart) {
     container->layout()->addWidget(view);
 }
 
-// ── Badge helpers ─────────────────────────────────────────────────────────────
+
 
 static void applyStatusBadge(QLabel *label, const QString &status) {
     label->setText(status.toUpper());
@@ -93,7 +82,7 @@ static const QString kPlainLabel =
     "border:none;background:transparent;background-color:transparent;";
 
 
-// ── Constructor / Destructor ──────────────────────────────────────────────────
+
 
 adminwindow::adminwindow(const QString &employeeName, QWidget *parent)
     : QWidget(parent)
@@ -143,7 +132,7 @@ adminwindow::~adminwindow()
 }
 
 
-// ── Clock ─────────────────────────────────────────────────────────────────────
+
 
 void adminwindow::updateDateTime()
 {
@@ -153,7 +142,7 @@ void adminwindow::updateDateTime()
 }
 
 
-// ── Navigation ────────────────────────────────────────────────────────────────
+
 
 void adminwindow::on_btnMenu_clicked()
 {
@@ -194,7 +183,7 @@ void adminwindow::on_btnScheduling_clicked()
 }
 
 
-// ── Dashboard charts ──────────────────────────────────────────────────────────
+//Dashboard charts
 
 void adminwindow::initDashboardGraphs()
 {
@@ -284,8 +273,7 @@ void adminwindow::initDashboardGraphs()
 }
 
 
-// ── Patient table (overview page) ────────────────────────────────────────────
-
+// Patient table
 void adminwindow::setupPatientHeader()
 {
     if (!ui->webContainer) return;
@@ -422,7 +410,7 @@ void adminwindow::addPatientRow(const QString &id,     const QString &name,
 }
 
 
-// ── Staff Manager page ────────────────────────────────────────────────────────
+//Staff Manager page
 
 void adminwindow::setupStaffPage()
 {

@@ -129,7 +129,7 @@ int StaffManager::getTotalCount() const {
 }
 
 
-// ── Dialog factory functions ────────────────────────────────────────────
+
 // Replace AddStaffDialog / EditStaffDialog classes. Each builds a plain
 // QDialog and returns it; widgets are handed back via reference
 // out-parameters so the caller can read final values after exec().

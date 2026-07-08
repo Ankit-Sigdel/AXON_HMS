@@ -11,9 +11,9 @@
 #include <QCoreApplication>
 
 
-// Include your other dashboard window headers here
+
 #include "adminwindow.h"
-// #include "doctorwindow.h" // Uncomment or add your other roles' headers as you create them
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
