@@ -12,8 +12,6 @@
 #include <QScrollArea>
 #include <QScrollBar>
 
-
-// Required native elements
 #include <QtCharts/QChartView>
 #include <QtCharts/QPieSeries>
 #include <QtCharts/QPieSlice>
@@ -34,233 +32,17 @@
 #include <QWebEngineView>
 #include <QUrl>
 
-// QDialogue for EditPatient Button
-class EditPatientDialog : public QDialog {
-public:
-    QLineEdit *nameEdit;
-    QComboBox *genderBox;
-    QLineEdit *problemEdit;
-    QLineEdit *doctorEdit;
-    QComboBox *statusBox;
-
-    EditPatientDialog(const QString &id, const QString &name, const QString &gender,
-                      const QString &problem, const QString &doctor, const QString &status,
-                      QWidget *parent = nullptr) : QDialog(parent)
-    {
-        setWindowTitle("Modify Patient Record — " + id);
-        setMinimumWidth(380);
-        setStyleSheet(
-            "QDialog { background-color: #ffffff; border-radius: 8px; }"
-            "QLabel { font-weight: bold; color: #334155; font-size: 12px; border:none; background:transparent; }"
-            "QLineEdit, QComboBox { padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px;"
-            "  background: #f8fafc; color: #0f172a; }"
-            "QLineEdit:focus, QComboBox:focus { border: 1px solid #6366f1; background: #ffffff; }"
-            "QPushButton { padding: 6px 14px; font-weight: bold; border-radius: 6px; font-size: 12px; }"
-        );
-
-        QFormLayout *form = new QFormLayout(this);
-        form->setContentsMargins(24, 24, 24, 24);
-        form->setSpacing(14);
-
-        nameEdit    = new QLineEdit(name, this);
-        genderBox   = new QComboBox(this);
-        genderBox->addItems({"Male", "Female", "Other"});
-        genderBox->setCurrentText(gender);
-        problemEdit = new QLineEdit(problem, this);
-        doctorEdit  = new QLineEdit(doctor, this);
-        statusBox   = new QComboBox(this);
-        statusBox->addItems({"Admitted", "Discharged", "Checked In", "No Show", "Completed"});
-        statusBox->setCurrentText(status.trimmed());
-
-        form->addRow("Patient Name:",       nameEdit);
-        form->addRow("Gender:",             genderBox);
-        form->addRow("Diagnosis/Problem:",  problemEdit);
-        form->addRow("Assigned Doctor:",    doctorEdit);
-        form->addRow("Status:",             statusBox);
-
-        QHBoxLayout *btns = new QHBoxLayout();
-        QPushButton *cancel = new QPushButton("Cancel", this);
-        QPushButton *save   = new QPushButton("Save Changes", this);
-        cancel->setStyleSheet("background-color:#f1f5f9;color:#475569;border:1px solid #e2e8f0;");
-        save->setStyleSheet("background-color:#0284c7;color:#ffffff;border:none;");
-        btns->addStretch();
-        btns->addWidget(cancel);
-        btns->addWidget(save);
-        form->addRow(btns);
-
-        connect(cancel, &QPushButton::clicked, this, &QDialog::reject);
-        connect(save,   &QPushButton::clicked, this, &QDialog::accept);
-    }
-};
-
-// QDialogue for AddStaff Button
-class AddStaffDialog : public QDialog {
-public:
-    QLineEdit *usernameEdit;
-    QLineEdit *passwordEdit;
-    QComboBox *roleBox;
-    QLineEdit *idEdit;
-    QLineEdit *nameEdit;
-    QLineEdit *ageEdit;
-    QComboBox *genderBox;
-    QLineEdit *phoneEdit;
-    QComboBox *statusBox;
-
-    explicit AddStaffDialog(QWidget *parent = nullptr) : QDialog(parent)
-    {
-        setWindowTitle("Add New Staff Member");
-        setMinimumWidth(400);
-        setStyleSheet(
-            "QDialog { background-color: #ffffff; }"
-            "QLabel { font-weight: 600; color: #334155; font-size: 12px; border:none; background:transparent; }"
-            "QLineEdit, QComboBox { padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 8px;"
-            "  background: #f8fafc; color: #0f172a; font-size: 12px; }"
-            "QLineEdit:focus, QComboBox:focus { border: 1px solid #0284c7; background: #fff; }"
-            "QPushButton { padding: 8px 16px; font-weight: bold; border-radius: 8px; font-size: 12px; }"
-        );
-
-        QFormLayout *form = new QFormLayout(this);
-        form->setContentsMargins(28, 28, 28, 28);
-        form->setSpacing(14);
-
-        // Credentials section header
-        QLabel *credHeader = new QLabel("── Login Credentials ──", this);
-        credHeader->setStyleSheet("color:#0284c7; font-size:11px; font-weight:700; border:none; background:transparent;");
-        form->addRow(credHeader);
-
-        usernameEdit = new QLineEdit(this);
-        usernameEdit->setPlaceholderText("e.g. drsmith");
-        passwordEdit = new QLineEdit(this);
-        passwordEdit->setPlaceholderText("Set initial password");
-        passwordEdit->setEchoMode(QLineEdit::Password);
-
-        roleBox = new QComboBox(this);
-        roleBox->addItems({"Admin", "Doctor", "Receptionist"});
-
-        form->addRow("Username:",  usernameEdit);
-        form->addRow("Password:",  passwordEdit);
-        form->addRow("Role:",      roleBox);
-
-        // Profile section header
-        QLabel *profileHeader = new QLabel("── Staff Profile ──", this);
-        profileHeader->setStyleSheet("color:#0284c7; font-size:11px; font-weight:700; border:none; background:transparent;");
-        form->addRow(profileHeader);
-
-        idEdit    = new QLineEdit(this);
-        idEdit->setPlaceholderText("e.g. STF_004");
-        nameEdit  = new QLineEdit(this);
-        nameEdit->setPlaceholderText("Full Name");
-        ageEdit   = new QLineEdit(this);
-        ageEdit->setPlaceholderText("Age");
-        genderBox = new QComboBox(this);
-        genderBox->addItems({"Male", "Female", "Other"});
-        phoneEdit = new QLineEdit(this);
-        phoneEdit->setPlaceholderText("Phone Number");
-        statusBox = new QComboBox(this);
-        statusBox->addItems({"On Duty", "On Leave"});
-
-        form->addRow("Staff ID:",  idEdit);
-        form->addRow("Full Name:", nameEdit);
-        form->addRow("Age:",       ageEdit);
-        form->addRow("Gender:",    genderBox);
-        form->addRow("Phone:",     phoneEdit);
-        form->addRow("Status:",    statusBox);
-
-        // Buttons
-        QHBoxLayout *btns = new QHBoxLayout();
-        QPushButton *cancel = new QPushButton("Cancel", this);
-        QPushButton *addBtn = new QPushButton("Add Staff", this);
-        cancel->setStyleSheet("background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;");
-        addBtn->setStyleSheet("background:#0284c7;color:#ffffff;border:none;");
-        btns->addStretch();
-        btns->addWidget(cancel);
-        btns->addWidget(addBtn);
-        form->addRow(btns);
-
-        connect(cancel, &QPushButton::clicked, this, &QDialog::reject);
-        connect(addBtn, &QPushButton::clicked, this, [=]() {
-            if (usernameEdit->text().trimmed().isEmpty() ||
-                passwordEdit->text().trimmed().isEmpty() ||
-                idEdit->text().trimmed().isEmpty()       ||
-                nameEdit->text().trimmed().isEmpty()) {
-                QMessageBox::warning(this, "Incomplete", "Username, Password, Staff ID, and Full Name are required.");
-                return;
-            }
-            accept();
-        });
-    }
-};
+// NOTE: EditPatientDialog, AddStaffDialog, and EditStaffDialog used to be
+// QDialog subclasses defined right here. They have been replaced with plain
+// factory functions:
+//   createEditPatientDialog()  ->  patientmanager.cpp / patientmanager.h
+//   createAddStaffDialog()     ->  staffmanager.cpp   / staffmanager.h
+//   createEditStaffDialog()    ->  staffmanager.cpp   / staffmanager.h
+// Each builds and returns a QDialog* and hands the editable widgets back
+// via reference out-parameters so the caller can read values after exec().
 
 
-class EditStaffDialog : public QDialog {
-public:
-    QLineEdit *usernameEdit;
-    QLineEdit *passwordEdit;
-    QComboBox *roleBox;
-    QLineEdit *nameEdit;
-    QLineEdit *ageEdit;
-    QComboBox *genderBox;
-    QLineEdit *phoneEdit;
-    QComboBox *statusBox;
-
-    EditStaffDialog(const StaffData &s, QWidget *parent = nullptr) : QDialog(parent)
-    {
-        setWindowTitle("Edit Staff — " + s.id);
-        setMinimumWidth(380);
-        setStyleSheet(
-            "QDialog { background-color: #ffffff; }"
-            "QLabel { font-weight: 600; color: #334155; font-size: 12px; border:none; background:transparent; }"
-            "QLineEdit, QComboBox { padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 8px;"
-            "  background: #f8fafc; color: #0f172a; }"
-            "QLineEdit:focus, QComboBox:focus { border: 1px solid #0284c7; background: #fff; }"
-            "QPushButton { padding: 8px 16px; font-weight: bold; border-radius: 8px; }"
-        );
-
-        QFormLayout *form = new QFormLayout(this);
-        form->setContentsMargins(24, 24, 24, 24);
-        form->setSpacing(12);
-
-        usernameEdit = new QLineEdit(s.username, this);
-        passwordEdit = new QLineEdit(s.password, this);
-        passwordEdit->setEchoMode(QLineEdit::Password);
-        roleBox      = new QComboBox(this);
-        roleBox->addItems({"Admin", "Doctor", "Receptionist"});
-        roleBox->setCurrentText(s.role);
-        nameEdit  = new QLineEdit(s.name,   this);
-        ageEdit   = new QLineEdit(s.age,    this);
-        genderBox = new QComboBox(this);
-        genderBox->addItems({"Male", "Female", "Other"});
-        genderBox->setCurrentText(s.gender);
-        phoneEdit = new QLineEdit(s.phone,  this);
-        statusBox = new QComboBox(this);
-        statusBox->addItems({"On Duty", "On Leave"});
-        statusBox->setCurrentText(s.status.isEmpty() ? "On Duty" : s.status);
-
-        form->addRow("Username:", usernameEdit);
-        form->addRow("Password:", passwordEdit);
-        form->addRow("Role:",     roleBox);
-        form->addRow("Name:",     nameEdit);
-        form->addRow("Age:",      ageEdit);
-        form->addRow("Gender:",   genderBox);
-        form->addRow("Phone:",    phoneEdit);
-        form->addRow("Status:",   statusBox);
-
-        QHBoxLayout *btns = new QHBoxLayout();
-        QPushButton *cancel = new QPushButton("Cancel", this);
-        QPushButton *save   = new QPushButton("Save", this);
-        cancel->setStyleSheet("background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;");
-        save->setStyleSheet("background:#0284c7;color:#ffffff;border:none;");
-        btns->addStretch();
-        btns->addWidget(cancel);
-        btns->addWidget(save);
-        form->addRow(btns);
-
-        connect(cancel, &QPushButton::clicked, this, &QDialog::reject);
-        connect(save,   &QPushButton::clicked, this, &QDialog::accept);
-    }
-};
-
-// charts and line graphs
+// ── Shared chart helper ──────────────────────────────────────────────────────
 
 static void embedChart(QWidget *container, QChart *chart) {
     if (!container || !chart) return;
@@ -285,51 +67,33 @@ static void embedChart(QWidget *container, QChart *chart) {
     container->layout()->addWidget(view);
 }
 
-// Returns a styled status badge label
+// ── Badge helpers ─────────────────────────────────────────────────────────────
+
 static void applyStatusBadge(QLabel *label, const QString &status) {
     label->setText(status.toUpper());
     label->setAlignment(Qt::AlignCenter);
     QString norm = status.toLower().trimmed();
 
     if (norm == "admitted" || norm == "checked in" || norm == "present" || norm == "on duty") {
-        label->setStyleSheet(
-            // "background-color:#dcfce7;color:#15803d;border-radius:6px;"
-            "font-weight:bold;font-size:11px;padding:4px 8px;border:none;");
+        label->setStyleSheet("font-weight:bold;font-size:11px;padding:4px 8px;border:none;");
     } else if (norm == "discharged" || norm == "no show" || norm == "absent" || norm == "on leave") {
-        label->setStyleSheet(
-            // "background-color:#fee2e2;color:#b91c1c;border-radius:6px;"
-            "font-weight:bold;font-size:11px;padding:4px 8px;border:none;");
+        label->setStyleSheet("font-weight:bold;font-size:11px;padding:4px 8px;border:none;");
     } else {
-        label->setStyleSheet(
-            // "background-color:#e0f2fe;color:#0369a1;border-radius:6px;"
-            "font-weight:bold;font-size:11px;padding:4px 8px;border:none;");
+        label->setStyleSheet("font-weight:bold;font-size:11px;padding:4px 8px;border:none;");
     }
 }
 
-// Role badge colouring
 static void applyRoleBadge(QLabel *label, const QString &role) {
     label->setText(role.toUpper());
     label->setAlignment(Qt::AlignCenter);
-    QString r = role.toLower().trimmed();
-    if (r == "admin") {
-        label->setStyleSheet(
-            // "background-color:#fef9c3;color:#854d0e;border-radius:6px;"
-            "font-weight:bold;font-size:11px;padding:4px 8px;border:none;");
-    } else if (r == "doctor") {
-        label->setStyleSheet(
-            // "background-color:#dbeafe;color:#1e40af;border-radius:6px;"
-            "font-weight:bold;font-size:11px;padding:4px 8px;border:none;");
-    } else {
-        label->setStyleSheet(
-            // "background-color:#f3e8ff;color:#7e22ce;border-radius:6px;"
-            "font-weight:bold;font-size:11px;padding:4px 8px;border:none;");
-    }
+    label->setStyleSheet("font-weight:bold;font-size:11px;padding:4px 8px;border:none;");
 }
 
 static const QString kPlainLabel =
     "border:none;background:transparent;background-color:transparent;";
 
-// core
+
+// ── Constructor / Destructor ──────────────────────────────────────────────────
 
 adminwindow::adminwindow(const QString &employeeName, QWidget *parent)
     : QWidget(parent)
@@ -337,46 +101,36 @@ adminwindow::adminwindow(const QString &employeeName, QWidget *parent)
     , currentAdminName(employeeName)
 {
     ui->setupUi(this);
-
     this->setWindowTitle("AXON-HMS: Admin's Dashboard");
 
-    // Sidebar exclusive button group
     QButtonGroup *sidebarGroup = new QButtonGroup(this);
     sidebarGroup->addButton(ui->btnOverview);
     sidebarGroup->addButton(ui->btnStaffManager);
     sidebarGroup->addButton(ui->btnScheduling);
     sidebarGroup->setExclusive(true);
 
-    // Initialise backend objects
-    staffMgr    = new StaffManager();
-    patientMgr  = new PatientManager();
-    adminBackend = nullptr; // Admin class is pure logic; not needed for UI
+    staffMgr     = new StaffManager();
+    patientMgr   = new PatientManager();
+    adminBackend = nullptr;
 
-    // Live clock
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &adminwindow::updateDateTime);
     timer->start(1000);
     updateDateTime();
 
-    // Logo
     QPixmap logoPixmap(":/images/axonimg.png");
     if (ui->lblLogo && !logoPixmap.isNull())
         ui->lblLogo->setPixmap(logoPixmap.scaled(90, 90, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 
-    // Welcome message
     if (ui->message)
         ui->message->setText(QString("Welcome back, %1!").arg(currentAdminName));
 
-    // Start on overview
     if (ui->stackedWidget) ui->stackedWidget->setCurrentIndex(0);
     ui->btnOverview->setChecked(true);
 
-    // Build overview charts and patient table
     initDashboardGraphs();
     setupPatientHeader();
     loadPatientRowsFromBackend();
-
-    // Build the staff manager page
     setupStaffPage();
 }
 
@@ -389,7 +143,7 @@ adminwindow::~adminwindow()
 }
 
 
-// CLOCK
+// ── Clock ─────────────────────────────────────────────────────────────────────
 
 void adminwindow::updateDateTime()
 {
@@ -399,7 +153,7 @@ void adminwindow::updateDateTime()
 }
 
 
-// MENU / NAV BUTTONS
+// ── Navigation ────────────────────────────────────────────────────────────────
 
 void adminwindow::on_btnMenu_clicked()
 {
@@ -413,58 +167,56 @@ void adminwindow::on_btnMenu_clicked()
     }
 }
 
-void adminwindow::on_btnOverview_clicked()     { if (ui->stackedWidget) ui->stackedWidget->setCurrentIndex(0);  initDashboardGraphs();}
-void adminwindow::on_btnStaffManager_clicked() { if (ui->stackedWidget) ui->stackedWidget->setCurrentIndex(1); }
+void adminwindow::on_btnOverview_clicked()
+{
+    if (ui->stackedWidget) ui->stackedWidget->setCurrentIndex(0);
+    initDashboardGraphs();
+}
+
+void adminwindow::on_btnStaffManager_clicked()
+{
+    if (ui->stackedWidget) ui->stackedWidget->setCurrentIndex(1);
+}
+
 void adminwindow::on_btnScheduling_clicked()
 {
     ui->stackedWidget->setGeometry(165, 11, 1104, 698);
 
-    // Look for an existing web view child inside the stacked widget
     QWebEngineView *webView = ui->stackedWidget->findChild<QWebEngineView*>();
-
     if (!webView) {
-        // If it doesn't exist yet, create it
         webView = new QWebEngineView(ui->stackedWidget);
         webView->setUrl(QUrl("https://teamup.com/c/vvud1m/axon-hms"));
         ui->stackedWidget->addWidget(webView);
     } else {
-        // Optional: Reload or change the URL if it already exists
         webView->setUrl(QUrl("https://teamup.com/c/vvud1m/axon-hms"));
     }
-
-    // Always bring it to focus when clicked
     ui->stackedWidget->setCurrentWidget(webView);
 }
 
 
-// OVERVIEW — CHARTS
+// ── Dashboard charts ──────────────────────────────────────────────────────────
 
 void adminwindow::initDashboardGraphs()
 {
-    int totalStaff   = staffMgr->getTotalCount();
+    int totalStaff    = staffMgr->getTotalCount();
     int totalPatients = patientMgr->getTotalCount();
 
-    int activeStaff = 0;
-    int inactiveStaff = 0;
+    int activeStaff = 0, inactiveStaff = 0;
     for (const auto &s : staffMgr->getAllStaff()) {
-        if (s.status.toLower().trimmed() == "on leave") {
-            inactiveStaff++;
-        } else {
-            activeStaff++;
-        }
+        if (s.status.toLower().trimmed() == "on leave") inactiveStaff++;
+        else                                             activeStaff++;
     }
 
-    // Update stat labels with live data
     if (ui->lblValueStaff)
         ui->lblValueStaff->setText(QString("%1 / %2").arg(activeStaff).arg(totalStaff));
     if (ui->lblValuePatients)
         ui->lblValuePatients->setText(QString::number(totalPatients));
 
-    // 1. STAFF PIE
+    // Staff pie
     QPieSeries *staffSeries = new QPieSeries();
     staffSeries->setPieSize(1.0);
-    staffSeries->append("Active",    activeStaff)->setBrush(QColor(0x166534));
-    staffSeries->append("Inactive",  inactiveStaff)->setBrush(QColor(0xbbf7d0));
+    staffSeries->append("Active",   activeStaff)->setBrush(QColor(0x166534));
+    staffSeries->append("Inactive", inactiveStaff)->setBrush(QColor(0xbbf7d0));
     QChart *staffChart = new QChart();
     staffChart->addSeries(staffSeries);
     if (ui->widgetGraphStaff) embedChart(ui->widgetGraphStaff, staffChart);
@@ -472,19 +224,14 @@ void adminwindow::initDashboardGraphs()
         ui->lblSubtextStaff->setText("<span style='color:#166534;'>●</span> Active &nbsp;"
                                      "<span style='color:#bbf7d0;'>●</span> Inactive");
 
-    // 2. ACTIVE DOCTORS donut
-    int activeDoctors = 0;
-    int inactiveDoctors = 0;
+    // Doctors donut
+    int activeDoctors = 0, inactiveDoctors = 0;
     for (const auto &s : staffMgr->getAllStaff()) {
         if (s.role.toLower().trimmed() == "doctor") {
-            if (s.status.toLower().trimmed() == "on leave") {
-                inactiveDoctors++;
-            } else {
-                activeDoctors++;
-            }
+            if (s.status.toLower().trimmed() == "on leave") inactiveDoctors++;
+            else                                             activeDoctors++;
         }
     }
-
     QPieSeries *docSeries = new QPieSeries();
     docSeries->setHoleSize(0.75);
     docSeries->setPieSize(0.95);
@@ -494,12 +241,13 @@ void adminwindow::initDashboardGraphs()
     docChart->addSeries(docSeries);
     if (ui->widgetGraphDoctors) embedChart(ui->widgetGraphDoctors, docChart);
     if (ui->lblValueDoctors)
-        ui->lblValueDoctors->setText(QString("%1 / %2").arg(activeDoctors).arg(activeDoctors + inactiveDoctors));
+        ui->lblValueDoctors->setText(
+            QString("%1 / %2").arg(activeDoctors).arg(activeDoctors + inactiveDoctors));
     if (ui->lblSubtextDoctors)
         ui->lblSubtextDoctors->setText("<span style='color:#0284c7;'>●</span> Active &nbsp;"
                                        "<span style='color:#e0f2fe;'>●</span> On Leave");
 
-    // 3. PATIENTS gender breakdown (from actual data)
+    // Patient gender breakdown
     int male = 0, female = 0, other = 0;
     for (const auto &p : patientMgr->getAllPatients()) {
         QString g = p.gender.toLower();
@@ -521,9 +269,9 @@ void adminwindow::initDashboardGraphs()
             "<span style='color:#ec4899;'>●</span> Female &nbsp;"
             "<span style='color:#f59e0b;'>●</span> Other");
 
-    // 4. REVENUE TREND (mock)
+    // Revenue trend (mock data)
     QLineSeries *revSeries = new QLineSeries();
-    revSeries->append(0, 95000); revSeries->append(1, 110000);
+    revSeries->append(0, 95000);  revSeries->append(1, 110000);
     revSeries->append(2, 125000); revSeries->append(3, 142500);
     revSeries->setPen(QPen(QColor(0x0d9488), 4));
     QChart *revChart = new QChart();
@@ -536,7 +284,7 @@ void adminwindow::initDashboardGraphs()
 }
 
 
-// patient table
+// ── Patient table (overview page) ────────────────────────────────────────────
 
 void adminwindow::setupPatientHeader()
 {
@@ -550,7 +298,6 @@ void adminwindow::setupPatientHeader()
     const QString hStyle =
         "font-weight:bold;font-size:11px;color:#94a3b8;"
         "border:none;background:transparent;background-color:transparent;";
-
     auto makeH = [&](const QString &txt, int stretch) {
         QLabel *l = new QLabel(txt);
         l->setStyleSheet(hStyle);
@@ -559,7 +306,6 @@ void adminwindow::setupPatientHeader()
     makeH("PATIENT ID", 1); makeH("NAME", 2); makeH("GENDER", 1);
     makeH("PROBLEM / DIAGNOSIS", 2); makeH("ASSIGNED DOCTOR", 2);
     makeH("STATUS", 1); makeH("ACTION", 1);
-
     headerWidget->setLayout(hl);
 
     QVBoxLayout *cardLayout = qobject_cast<QVBoxLayout*>(ui->webContainer->layout());
@@ -574,29 +320,27 @@ void adminwindow::setupPatientHeader()
 
 void adminwindow::loadPatientRowsFromBackend()
 {
-    auto patients = patientMgr->getAllPatients();
-
+    auto patients     = patientMgr->getAllPatients();
     int totalPatients = patients.size();
-    int displayCount = std::min(5, totalPatients);
+    int displayCount  = std::min(5, totalPatients);
 
-    // Loop backwards from the end of the list to load only the 5 most recent records
     for (int i = 0; i < displayCount; ++i) {
         const auto &p = patients[totalPatients - 1 - i];
         addPatientRow(p.id, p.name, p.gender, p.diagnosisTreatment,
                       p.assignedDoctor, p.status);
     }
 
-    // If database is empty, show placeholder rows so the UI isn't blank
     if (patients.isEmpty()) {
-        addPatientRow("PT-0001", "Aditya Poudel",   "Male",   "Cardiac Checkup",     "Dr. Rijal",   "Admitted");
-        addPatientRow("PT-0002", "Mira Gurung",     "Female", "Migraine Treatment",   "Dr. Subedi",  "Discharged");
-        addPatientRow("PT-0003", "Hari Rana",       "Male",   "Fracture Follow-up",   "Dr. Baral",   "Admitted");
-        addPatientRow("PT-0004", "Sita Wagle",      "Female", "General Physical",     "Dr. Acharya", "Completed");
+        addPatientRow("PT-0001", "Aditya Poudel", "Male",   "Cardiac Checkup",   "Dr. Rijal",   "Admitted");
+        addPatientRow("PT-0002", "Mira Gurung",   "Female", "Migraine Treatment", "Dr. Subedi",  "Discharged");
+        addPatientRow("PT-0003", "Hari Rana",     "Male",   "Fracture Follow-up", "Dr. Baral",   "Admitted");
+        addPatientRow("PT-0004", "Sita Wagle",    "Female", "General Physical",   "Dr. Acharya", "Completed");
     }
 }
 
-void adminwindow::addPatientRow(const QString &id, const QString &name, const QString &gender,
-                                const QString &problem, const QString &doctor, const QString &status)
+void adminwindow::addPatientRow(const QString &id,     const QString &name,
+                                const QString &gender, const QString &problem,
+                                const QString &doctor, const QString &status)
 {
     if (!ui->webContainer) return;
 
@@ -632,25 +376,36 @@ void adminwindow::addPatientRow(const QString &id, const QString &name, const QS
         "QPushButton:pressed{background-color:#cbd5e1;}");
 
     connect(btnEdit, &QPushButton::clicked, this, [=]() {
-        EditPatientDialog dlg(lblId->text(), lblName->text(), lblGender->text(),
-                              lblProblem->text(), lblDoctor->text(), lblStatus->text(), this);
-        if (dlg.exec() == QDialog::Accepted) {
-            lblName->setText(dlg.nameEdit->text());
-            lblGender->setText(dlg.genderBox->currentText());
-            lblProblem->setText(dlg.problemEdit->text());
-            lblDoctor->setText(dlg.doctorEdit->text());
-            applyStatusBadge(lblStatus, dlg.statusBox->currentText());
+        // Out-parameter widgets — factory fills these in
+        QLineEdit *nameEdit    = nullptr;
+        QComboBox *genderBox   = nullptr;
+        QLineEdit *problemEdit = nullptr;
+        QLineEdit *doctorEdit  = nullptr;
+        QComboBox *statusBox   = nullptr;
 
-            // Persist change to backend
-            Patient updated = patientMgr->searchPatient(lblId->text());
-            updated.name               = dlg.nameEdit->text();
-            updated.gender             = dlg.genderBox->currentText();
-            updated.diagnosisTreatment = dlg.problemEdit->text();
-            updated.assignedDoctor     = dlg.doctorEdit->text();
-            updated.status             = dlg.statusBox->currentText();
+        QDialog *dlg = createEditPatientDialog(
+            lblId->text(), lblName->text(), lblGender->text(),
+            lblProblem->text(), lblDoctor->text(), lblStatus->text(),
+            this,
+            nameEdit, genderBox, problemEdit, doctorEdit, statusBox);
+
+        if (dlg->exec() == QDialog::Accepted) {
+            lblName->setText(nameEdit->text());
+            lblGender->setText(genderBox->currentText());
+            lblProblem->setText(problemEdit->text());
+            lblDoctor->setText(doctorEdit->text());
+            applyStatusBadge(lblStatus, statusBox->currentText());
+
+            Patient updated        = patientMgr->searchPatient(lblId->text());
+            updated.name               = nameEdit->text();
+            updated.gender             = genderBox->currentText();
+            updated.diagnosisTreatment = problemEdit->text();
+            updated.assignedDoctor     = doctorEdit->text();
+            updated.status             = statusBox->currentText();
             patientMgr->removePatient(lblId->text());
             patientMgr->addPatient(updated);
         }
+        dlg->deleteLater();
     });
 
     rl->addWidget(lblId,      1);
@@ -667,17 +422,13 @@ void adminwindow::addPatientRow(const QString &id, const QString &name, const QS
 }
 
 
-// STAFF MANAGER PAGE
-
+// ── Staff Manager page ────────────────────────────────────────────────────────
 
 void adminwindow::setupStaffPage()
 {
-    // page_2 in the stacked widget is the staff manager page.
-
     QWidget *page2 = ui->stackedWidget->widget(1);
     if (!page2) return;
 
-    // Clear any existing layout
     if (page2->layout()) {
         QLayoutItem *item;
         while ((item = page2->layout()->takeAt(0))) {
@@ -691,10 +442,11 @@ void adminwindow::setupStaffPage()
     pageLayout->setContentsMargins(20, 16, 20, 16);
     pageLayout->setSpacing(14);
 
-    // ── Header row ──────────────────────────────────────────────────────────
+    // Header row
     QHBoxLayout *headerRow = new QHBoxLayout();
     QLabel *title = new QLabel("Staff Manager");
-    title->setStyleSheet("font-size:22px;font-weight:700;color:#0f172a;border:none;background:transparent;");
+    title->setStyleSheet(
+        "font-size:22px;font-weight:700;color:#0f172a;border:none;background:transparent;");
 
     QPushButton *btnAdd = new QPushButton("＋  Add Staff");
     btnAdd->setFixedHeight(38);
@@ -709,20 +461,19 @@ void adminwindow::setupStaffPage()
     headerRow->addWidget(btnAdd);
     pageLayout->addLayout(headerRow);
 
-
     staffCountLabel = new QLabel();
-    staffCountLabel->setStyleSheet("font-size:13px;color:#64748b;border:none;background:transparent;");
+    staffCountLabel->setStyleSheet(
+        "font-size:13px;color:#64748b;border:none;background:transparent;");
     updateStaffCountLabel();
     pageLayout->addWidget(staffCountLabel);
 
-
+    // Column header bar
     QWidget *colHeader = new QWidget();
-    colHeader->setStyleSheet("background-color:#f8fafc;border-bottom:2px solid #e2e8f0;"
-                             "border-radius:0px;");
+    colHeader->setStyleSheet(
+        "background-color:#f8fafc;border-bottom:2px solid #e2e8f0;border-radius:0px;");
     QHBoxLayout *chLayout = new QHBoxLayout(colHeader);
     chLayout->setContentsMargins(16, 8, 16, 8);
     chLayout->setSpacing(10);
-
     const QString chStyle =
         "font-weight:700;font-size:11px;color:#94a3b8;"
         "border:none;background:transparent;background-color:transparent;";
@@ -730,12 +481,12 @@ void adminwindow::setupStaffPage()
         QLabel *l = new QLabel(txt); l->setStyleSheet(chStyle);
         chLayout->addWidget(l, s);
     };
-    makeCol("STAFF ID",  1); makeCol("FULL NAME", 2); makeCol("ROLE", 1);
-    makeCol("AGE",       1); makeCol("GENDER",    1); makeCol("PHONE",    2);
-    makeCol("USERNAME",  2); makeCol("STATUS",    2); makeCol("ACTIONS",   2);
+    makeCol("STAFF ID", 1); makeCol("FULL NAME", 2); makeCol("ROLE",    1);
+    makeCol("AGE",      1); makeCol("GENDER",    1); makeCol("PHONE",   2);
+    makeCol("USERNAME", 2); makeCol("STATUS",    2); makeCol("ACTIONS", 2);
     pageLayout->addWidget(colHeader);
 
-
+    // Scrollable rows area
     staffScrollArea = new QScrollArea();
     staffScrollArea->setWidgetResizable(true);
     staffScrollArea->setFrameShape(QFrame::NoFrame);
@@ -751,23 +502,21 @@ void adminwindow::setupStaffPage()
     staffScrollArea->setWidget(staffRowContainer);
     pageLayout->addWidget(staffScrollArea, 1);
 
-    // Populate from backend
     refreshStaffTable();
     initDashboardGraphs();
 
-    // Connect Add button
     connect(btnAdd, &QPushButton::clicked, this, &adminwindow::onAddStaffClicked);
 }
 
 void adminwindow::updateStaffCountLabel()
 {
     if (!staffCountLabel) return;
-    int total  = staffMgr->getTotalCount();
-    int docs   = 0, admins = 0, recs = 0;
+    int total = staffMgr->getTotalCount();
+    int docs = 0, admins = 0, recs = 0;
     for (const auto &s : staffMgr->getAllStaff()) {
-        if (s.role == "Doctor")       docs++;
-        else if (s.role == "Admin")   admins++;
-        else                          recs++;
+        if      (s.role == "Doctor")       docs++;
+        else if (s.role == "Admin")        admins++;
+        else                               recs++;
     }
     staffCountLabel->setText(
         QString("Total Staff: <b>%1</b> &nbsp;|&nbsp; "
@@ -779,16 +528,13 @@ void adminwindow::updateStaffCountLabel()
 
 void adminwindow::refreshStaffTable()
 {
-    // Remove all existing rows (leave the stretch at the end)
     while (staffRowsLayout->count() > 1) {
         QLayoutItem *item = staffRowsLayout->takeAt(0);
         if (item->widget()) item->widget()->deleteLater();
         delete item;
     }
-
-    for (const auto &s : staffMgr->getAllStaff()) {
+    for (const auto &s : staffMgr->getAllStaff())
         addStaffRow(s);
-    }
     updateStaffCountLabel();
 }
 
@@ -822,7 +568,6 @@ void adminwindow::addStaffRow(const StaffData &s)
     applyRoleBadge(lblRole, s.role);
     applyStatusBadge(lblStatus, s.status.isEmpty() ? "On Duty" : s.status);
 
-    // Actions: Edit + Remove
     QWidget *actionWidget = new QWidget();
     actionWidget->setStyleSheet("background:transparent;border:none;");
     QHBoxLayout *al = new QHBoxLayout(actionWidget);
@@ -845,26 +590,43 @@ void adminwindow::addStaffRow(const StaffData &s)
     al->addWidget(btnRemove);
     actionWidget->setLayout(al);
 
-    QString staffIdCopy = s.id; // captured for lambdas
+    QString staffIdCopy = s.id;
 
     connect(btnEdit, &QPushButton::clicked, this, [=]() {
         StaffData current = staffMgr->searchStaff(staffIdCopy);
-        EditStaffDialog dlg(current, this);
-        if (dlg.exec() == QDialog::Accepted) {
-            current.username = dlg.usernameEdit->text().trimmed();
-            current.password = dlg.passwordEdit->text().trimmed();
-            current.role     = dlg.roleBox->currentText();
-            current.name     = dlg.nameEdit->text().trimmed();
-            current.age      = dlg.ageEdit->text().trimmed();
-            current.gender   = dlg.genderBox->currentText();
-            current.phone    = dlg.phoneEdit->text().trimmed();
-            current.status   = dlg.statusBox->currentText();
+
+        // Out-parameter widgets — factory fills these in
+        QLineEdit *usernameEdit = nullptr;
+        QLineEdit *passwordEdit = nullptr;
+        QComboBox *roleBox      = nullptr;
+        QLineEdit *nameEdit     = nullptr;
+        QLineEdit *ageEdit      = nullptr;
+        QComboBox *genderBox    = nullptr;
+        QLineEdit *phoneEdit    = nullptr;
+        QComboBox *statusBox    = nullptr;
+
+        QDialog *dlg = createEditStaffDialog(
+            current, this,
+            usernameEdit, passwordEdit, roleBox,
+            nameEdit, ageEdit, genderBox,
+            phoneEdit, statusBox);
+
+        if (dlg->exec() == QDialog::Accepted) {
+            current.username = usernameEdit->text().trimmed();
+            current.password = passwordEdit->text().trimmed();
+            current.role     = roleBox->currentText();
+            current.name     = nameEdit->text().trimmed();
+            current.age      = ageEdit->text().trimmed();
+            current.gender   = genderBox->currentText();
+            current.phone    = phoneEdit->text().trimmed();
+            current.status   = statusBox->currentText();
 
             if (staffMgr->updateStaff(current)) {
                 refreshStaffTable();
                 initDashboardGraphs();
             }
         }
+        dlg->deleteLater();
     });
 
     connect(btnRemove, &QPushButton::clicked, this, [=]() {
@@ -882,47 +644,65 @@ void adminwindow::addStaffRow(const StaffData &s)
         }
     });
 
-    rl->addWidget(lblId,     1);
-    rl->addWidget(lblName,   2);
-    rl->addWidget(lblRole,   1);
-    rl->addWidget(lblAge,    1);
-    rl->addWidget(lblGender, 1);
-    rl->addWidget(lblPhone,  2);
-    rl->addWidget(lblUser,   2);
-    rl->addWidget(lblStatus, 2);
-    rl->addWidget(actionWidget, 2);
+    rl->addWidget(lblId,       1);
+    rl->addWidget(lblName,     2);
+    rl->addWidget(lblRole,     1);
+    rl->addWidget(lblAge,      1);
+    rl->addWidget(lblGender,   1);
+    rl->addWidget(lblPhone,    2);
+    rl->addWidget(lblUser,     2);
+    rl->addWidget(lblStatus,   2);
+    rl->addWidget(actionWidget,2);
     row->setLayout(rl);
 
-    // Insert before the trailing stretch
     staffRowsLayout->insertWidget(staffRowsLayout->count() - 1, row);
 }
 
 void adminwindow::onAddStaffClicked()
 {
-    AddStaffDialog dlg(this);
-    if (dlg.exec() != QDialog::Accepted) return;
+    // Out-parameter widgets — factory fills these in
+    QLineEdit *usernameEdit = nullptr;
+    QLineEdit *passwordEdit = nullptr;
+    QComboBox *roleBox      = nullptr;
+    QLineEdit *idEdit       = nullptr;
+    QLineEdit *nameEdit     = nullptr;
+    QLineEdit *ageEdit      = nullptr;
+    QComboBox *genderBox    = nullptr;
+    QLineEdit *phoneEdit    = nullptr;
+    QComboBox *statusBox    = nullptr;
+
+    QDialog *dlg = createAddStaffDialog(this,
+        usernameEdit, passwordEdit, roleBox, idEdit,
+        nameEdit, ageEdit, genderBox, phoneEdit, statusBox);
+
+    if (dlg->exec() != QDialog::Accepted) {
+        dlg->deleteLater();
+        return;
+    }
 
     StaffData newStaff;
-    newStaff.username = dlg.usernameEdit->text().trimmed();
-    newStaff.password = dlg.passwordEdit->text().trimmed();
-    newStaff.role     = dlg.roleBox->currentText();
-    newStaff.id       = dlg.idEdit->text().trimmed();
-    newStaff.name     = dlg.nameEdit->text().trimmed();
-    newStaff.age      = dlg.ageEdit->text().trimmed();
-    newStaff.gender   = dlg.genderBox->currentText();
-    newStaff.phone    = dlg.phoneEdit->text().trimmed();
-    newStaff.status   = dlg.statusBox->currentText();
+    newStaff.username = usernameEdit->text().trimmed();
+    newStaff.password = passwordEdit->text().trimmed();
+    newStaff.role     = roleBox->currentText();
+    newStaff.id       = idEdit->text().trimmed();
+    newStaff.name     = nameEdit->text().trimmed();
+    newStaff.age      = ageEdit->text().trimmed();
+    newStaff.gender   = genderBox->currentText();
+    newStaff.phone    = phoneEdit->text().trimmed();
+    newStaff.status   = statusBox->currentText();
 
-    // Duplicate username check
+    dlg->deleteLater();
+
+    // Duplicate checks
     for (const auto &s : staffMgr->getAllStaff()) {
         if (s.username == newStaff.username) {
             QMessageBox::warning(this, "Duplicate Username",
-                                 "A staff member with that username already exists.");
+                "A staff member with that username already exists.");
             return;
         }
         if (s.id == newStaff.id) {
             QMessageBox::warning(this, "Duplicate Staff ID",
-                                 "A staff member with that ID already exists.");
+                "A staff member with that ID already exists.");
             return;
         }
     }

@@ -3,6 +3,12 @@
 #include <QTextStream>
 #include <QDebug>
 
+#include <QFormLayout>
+#include <QHBoxLayout>
+#include <QLineEdit>
+#include <QComboBox>
+#include <QPushButton>
+
 PatientManager::PatientManager() {
     loadAll();
 }
@@ -155,4 +161,70 @@ QVector<Patient> PatientManager::getAllPatients() const {
 
 int PatientManager::getTotalCount() const {
     return patientList.size();
+}
+
+
+// ── Dialog factory function ─────────────────────────────────────────────
+// Replaces the old EditPatientDialog class. Builds the same UI on a plain
+// QDialog and returns it; the editable widgets are handed back through the
+// reference out-parameters so the caller can read final values after exec().
+QDialog *createEditPatientDialog(const QString &id, const QString &name, const QString &gender,
+                                  const QString &problem, const QString &doctor, const QString &status,
+                                  QWidget *parent,
+                                  QLineEdit *&outNameEdit, QComboBox *&outGenderBox,
+                                  QLineEdit *&outProblemEdit, QLineEdit *&outDoctorEdit,
+                                  QComboBox *&outStatusBox)
+{
+    QDialog *dlg = new QDialog(parent);
+    dlg->setWindowTitle("Modify Patient Record — " + id);
+    dlg->setMinimumWidth(380);
+    dlg->setStyleSheet(
+        "QDialog { background-color: #ffffff; border-radius: 8px; }"
+        "QLabel { font-weight: bold; color: #334155; font-size: 12px; border:none; background:transparent; }"
+        "QLineEdit, QComboBox { padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px;"
+        "  background: #f8fafc; color: #0f172a; }"
+        "QLineEdit:focus, QComboBox:focus { border: 1px solid #6366f1; background: #ffffff; }"
+        "QPushButton { padding: 6px 14px; font-weight: bold; border-radius: 6px; font-size: 12px; }"
+    );
+
+    QFormLayout *form = new QFormLayout(dlg);
+    form->setContentsMargins(24, 24, 24, 24);
+    form->setSpacing(14);
+
+    QLineEdit *nameEdit    = new QLineEdit(name, dlg);
+    QComboBox *genderBox   = new QComboBox(dlg);
+    genderBox->addItems({"Male", "Female", "Other"});
+    genderBox->setCurrentText(gender);
+    QLineEdit *problemEdit = new QLineEdit(problem, dlg);
+    QLineEdit *doctorEdit  = new QLineEdit(doctor, dlg);
+    QComboBox *statusBox   = new QComboBox(dlg);
+    statusBox->addItems({"Admitted", "Discharged", "Checked In", "No Show", "Completed"});
+    statusBox->setCurrentText(status.trimmed());
+
+    form->addRow("Patient Name:",       nameEdit);
+    form->addRow("Gender:",             genderBox);
+    form->addRow("Diagnosis/Problem:",  problemEdit);
+    form->addRow("Assigned Doctor:",    doctorEdit);
+    form->addRow("Status:",             statusBox);
+
+    QHBoxLayout *btns = new QHBoxLayout();
+    QPushButton *cancel = new QPushButton("Cancel", dlg);
+    QPushButton *save   = new QPushButton("Save Changes", dlg);
+    cancel->setStyleSheet("background-color:#f1f5f9;color:#475569;border:1px solid #e2e8f0;");
+    save->setStyleSheet("background-color:#0284c7;color:#ffffff;border:none;");
+    btns->addStretch();
+    btns->addWidget(cancel);
+    btns->addWidget(save);
+    form->addRow(btns);
+
+    QObject::connect(cancel, &QPushButton::clicked, dlg, &QDialog::reject);
+    QObject::connect(save,   &QPushButton::clicked, dlg, &QDialog::accept);
+
+    outNameEdit    = nameEdit;
+    outGenderBox   = genderBox;
+    outProblemEdit = problemEdit;
+    outDoctorEdit  = doctorEdit;
+    outStatusBox   = statusBox;
+
+    return dlg;
 }
