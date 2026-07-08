@@ -331,7 +331,7 @@
       <property name="geometry">
        <rect>
         <x>-140</x>
-        <y>0</y>
+        <y>-10</y>
         <width>1321</width>
         <height>841</height>
        </rect>
@@ -351,10 +351,10 @@
        <widget class="QStackedWidget" name="widgetstackedtogether">
         <property name="geometry">
          <rect>
-          <x>110</x>
-          <y>0</y>
-          <width>1071</width>
-          <height>751</height>
+          <x>100</x>
+          <y>50</y>
+          <width>1081</width>
+          <height>891</height>
          </rect>
         </property>
         <property name="styleSheet">
@@ -366,13 +366,13 @@
 </string>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="page_3">
          <widget class="QLabel" name="receptionistdashboard">
           <property name="geometry">
            <rect>
-            <x>370</x>
+            <x>380</x>
             <y>0</y>
             <width>321</width>
             <height>41</height>
@@ -396,13 +396,13 @@
          <widget class="QWidget" name="layoutWidget">
           <property name="geometry">
            <rect>
-            <x>142</x>
-            <y>42</y>
-            <width>811</width>
+            <x>70</x>
+            <y>40</y>
+            <width>921</width>
             <height>191</height>
            </rect>
           </property>
-          <layout class="QHBoxLayout" name="horizontalLayout">
+          <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,2,2,0">
            <item>
             <widget class="QFrame" name="patients">
              <property name="minimumSize">
@@ -782,13 +782,13 @@ border: none;</string>
          <widget class="QWidget" name="layoutWidget">
           <property name="geometry">
            <rect>
-            <x>140</x>
-            <y>240</y>
-            <width>811</width>
-            <height>521</height>
+            <x>70</x>
+            <y>230</y>
+            <width>921</width>
+            <height>561</height>
            </rect>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
+          <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1">
            <item>
             <widget class="QFrame" name="frame_13">
              <property name="minimumSize">
@@ -799,8 +799,8 @@ border: none;</string>
              </property>
              <property name="maximumSize">
               <size>
-               <width>800</width>
-               <height>300</height>
+               <width>1000000</width>
+               <height>1000</height>
               </size>
              </property>
              <property name="styleSheet">
@@ -819,10 +819,10 @@ border-radius:15px;
              <widget class="QWidget" name="informations" native="true">
               <property name="geometry">
                <rect>
-                <x>2</x>
-                <y>-3</y>
-                <width>821</width>
-                <height>221</height>
+                <x>20</x>
+                <y>0</y>
+                <width>911</width>
+                <height>171</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -863,8 +863,8 @@ border:none;
                 <rect>
                  <x>10</x>
                  <y>80</y>
-                 <width>781</width>
-                 <height>121</height>
+                 <width>851</width>
+                 <height>91</height>
                 </rect>
                </property>
                <property name="styleSheet">
@@ -994,60 +994,65 @@ border:none;
                </property>
               </widget>
              </widget>
-            </widget>
-           </item>
-           <item>
-            <widget class="QWidget" name="information1" native="true">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>300</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">QPushButton{
+             <widget class="QWidget" name="information1" native="true">
+              <property name="geometry">
+               <rect>
+                <x>20</x>
+                <y>190</y>
+                <width>861</width>
+                <height>368</height>
+               </rect>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton{
 background:white;
 border:1px solid #CCCCCC;
 border-radius:10px;
 padding:8px;
 }</string>
-             </property>
-             <widget class="QLabel" name="tableRecentPatients">
-              <property name="geometry">
-               <rect>
-                <x>10</x>
-                <y>10</y>
-                <width>761</width>
-                <height>51</height>
-               </rect>
               </property>
-              <property name="font">
-               <font>
-                <family>Segoe UI</family>
-                <pointsize>16</pointsize>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">color:black;
+              <widget class="QLabel" name="tableRecentPatients">
+               <property name="geometry">
+                <rect>
+                 <x>60</x>
+                 <y>10</y>
+                 <width>761</width>
+                 <height>71</height>
+                </rect>
+               </property>
+               <property name="font">
+                <font>
+                 <family>Segoe UI</family>
+                 <pointsize>16</pointsize>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color:black;
 border:none;
 </string>
-              </property>
-              <property name="text">
-               <string>                                   Recently Registered Patients</string>
-              </property>
-             </widget>
-             <widget class="QTableWidget" name="registeredpatienttable">
-              <property name="geometry">
-               <rect>
-                <x>20</x>
-                <y>80</y>
-                <width>771</width>
-                <height>121</height>
-               </rect>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">color:black;
+               </property>
+               <property name="text">
+                <string>                                   Recently Registered Patients</string>
+               </property>
+              </widget>
+              <widget class="QTableWidget" name="registeredpatienttable">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>90</y>
+                 <width>851</width>
+                 <height>101</height>
+                </rect>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color:black;
 QTableWidget{
     background-color:white;
     border:none;
@@ -1061,112 +1066,113 @@ QHeaderView::section{
     padding:8px;
     font-weight:bold;
 }</string>
-              </property>
-              <property name="editTriggers">
-               <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
-              </property>
-              <property name="selectionBehavior">
-               <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
-              </property>
-              <property name="showGrid">
-               <bool>false</bool>
-              </property>
-              <property name="rowCount">
-               <number>5</number>
-              </property>
-              <property name="columnCount">
-               <number>5</number>
-              </property>
-              <attribute name="horizontalHeaderVisible">
-               <bool>false</bool>
-              </attribute>
-              <attribute name="horizontalHeaderMinimumSectionSize">
-               <number>15</number>
-              </attribute>
-              <attribute name="horizontalHeaderDefaultSectionSize">
-               <number>173</number>
-              </attribute>
-              <attribute name="horizontalHeaderStretchLastSection">
-               <bool>true</bool>
-              </attribute>
-              <attribute name="verticalHeaderVisible">
-               <bool>false</bool>
-              </attribute>
-              <attribute name="verticalHeaderDefaultSectionSize">
-               <number>28</number>
-              </attribute>
-              <row/>
-              <row/>
-              <row/>
-              <row/>
-              <row/>
-              <column/>
-              <column/>
-              <column/>
-              <column/>
-              <column/>
-              <item row="0" column="0">
-               <property name="text">
-                <string>Patient's ID </string>
                </property>
-              </item>
-              <item row="0" column="1">
-               <property name="text">
-                <string>Name </string>
+               <property name="editTriggers">
+                <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
                </property>
-              </item>
-              <item row="0" column="2">
-               <property name="text">
-                <string>Age </string>
+               <property name="selectionBehavior">
+                <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
                </property>
-              </item>
-              <item row="0" column="3">
-               <property name="text">
-                <string>Gender</string>
+               <property name="showGrid">
+                <bool>false</bool>
                </property>
-              </item>
-              <item row="0" column="4">
-               <property name="text">
-                <string>Status </string>
+               <property name="rowCount">
+                <number>5</number>
                </property>
-              </item>
-              <item row="1" column="0">
-               <property name="text">
-                <string>101</string>
+               <property name="columnCount">
+                <number>5</number>
                </property>
-              </item>
-              <item row="1" column="1">
-               <property name="text">
-                <string>Sudarshan</string>
-               </property>
-              </item>
-              <item row="1" column="2">
-               <property name="text">
-                <string>14</string>
-               </property>
-              </item>
-              <item row="1" column="3">
-               <property name="text">
-                <string>Male </string>
-               </property>
-              </item>
-              <item row="1" column="4">
-               <property name="text">
-                <string>Active </string>
-               </property>
-              </item>
+               <attribute name="horizontalHeaderVisible">
+                <bool>false</bool>
+               </attribute>
+               <attribute name="horizontalHeaderMinimumSectionSize">
+                <number>15</number>
+               </attribute>
+               <attribute name="horizontalHeaderDefaultSectionSize">
+                <number>173</number>
+               </attribute>
+               <attribute name="horizontalHeaderStretchLastSection">
+                <bool>true</bool>
+               </attribute>
+               <attribute name="verticalHeaderVisible">
+                <bool>false</bool>
+               </attribute>
+               <attribute name="verticalHeaderDefaultSectionSize">
+                <number>28</number>
+               </attribute>
+               <row/>
+               <row/>
+               <row/>
+               <row/>
+               <row/>
+               <column/>
+               <column/>
+               <column/>
+               <column/>
+               <column/>
+               <item row="0" column="0">
+                <property name="text">
+                 <string>Patient's ID </string>
+                </property>
+               </item>
+               <item row="0" column="1">
+                <property name="text">
+                 <string>Name </string>
+                </property>
+               </item>
+               <item row="0" column="2">
+                <property name="text">
+                 <string>Age </string>
+                </property>
+               </item>
+               <item row="0" column="3">
+                <property name="text">
+                 <string>Gender</string>
+                </property>
+               </item>
+               <item row="0" column="4">
+                <property name="text">
+                 <string>Status </string>
+                </property>
+               </item>
+               <item row="1" column="0">
+                <property name="text">
+                 <string>101</string>
+                </property>
+               </item>
+               <item row="1" column="1">
+                <property name="text">
+                 <string>Sudarshan</string>
+                </property>
+               </item>
+               <item row="1" column="2">
+                <property name="text">
+                 <string>14</string>
+                </property>
+               </item>
+               <item row="1" column="3">
+                <property name="text">
+                 <string>Male </string>
+                </property>
+               </item>
+               <item row="1" column="4">
+                <property name="text">
+                 <string>Active </string>
+                </property>
+               </item>
+              </widget>
              </widget>
             </widget>
            </item>
           </layout>
          </widget>
         </widget>
-        <widget class="QWidget" name="page_4">
+        <widget class="QWidget" name="">
          <widget class="QLabel" name="patientregistration">
           <property name="geometry">
            <rect>
-            <x>400</x>
-            <y>20</y>
+            <x>420</x>
+            <y>0</y>
             <width>261</width>
             <height>41</height>
            </rect>
@@ -1193,12 +1199,12 @@ QHeaderView::section{
           <property name="geometry">
            <rect>
             <x>60</x>
-            <y>80</y>
+            <y>40</y>
             <width>971</width>
-            <height>631</height>
+            <height>611</height>
            </rect>
           </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,2">
            <item>
             <widget class="QGroupBox" name="informatioofpatient">
              <property name="font">
@@ -1501,6 +1507,77 @@ QHeaderView::section{
           </property>
          </widget>
         </widget>
+       </widget>
+       <widget class="QLabel" name="welcome">
+        <property name="geometry">
+         <rect>
+          <x>130</x>
+          <y>10</y>
+          <width>1021</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QFrame#welcome {
+    background-color: white;
+}
+</string>
+        </property>
+        <property name="text">
+         <string>    Welcome Receptionist_Name!</string>
+        </property>
+       </widget>
+       <widget class="QToolButton" name="profileMenuButton">
+        <property name="geometry">
+         <rect>
+          <x>1090</x>
+          <y>30</y>
+          <width>41</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <family>Segoe UI</family>
+          <pointsize>-1</pointsize>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QToolButton {
+    background-color: transparent;
+    color: #001a33; /* Dark navy color for the bars */
+    font-size: 28px; /* Makes the bars thick and visible */
+    font-weight: bold;
+    border: none;
+    padding-bottom: 4px; /* Adjusts alignment */
+}
+
+QToolButton:hover {
+    background-color: #e6f2ff; /* The soft light-blue hover effect */
+    border-radius: 6px;
+}
+
+QToolButton::menu-indicator {
+    image: none; /* Removes the ugly default down-arrow */
+}
+</string>
+        </property>
+        <property name="text">
+         <string>☰</string>
+        </property>
        </widget>
       </widget>
      </widget>

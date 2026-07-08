@@ -292,6 +292,9 @@ QPushButton::menu-indicator{
        <height>651</height>
       </rect>
      </property>
+     <property name="currentIndex">
+      <number>2</number>
+     </property>
      <widget class="QWidget" name="pageOverview">
       <widget class="QWidget" name="headerWidget" native="true">
        <property name="geometry">
