@@ -4,6 +4,11 @@
 #include <QString>
 #include <QVector>
 #include <QTextStream>
+#include <QDialog>
+
+class QWidget;
+class QLineEdit;
+class QComboBox;
 
 // Full staff record — includes auth credentials plus profile data.
 // CSV format: username,password,Role,staff_id,full_name,age,gender,phone
@@ -40,5 +45,23 @@ private:
     void loadAll();
     void _parseStream(QTextStream &in);
 };
+
+// ── Dialog factories (replace AddStaffDialog / EditStaffDialog classes) ────
+// Each builds a plain QDialog and returns it. Editable widgets are handed
+// back via reference out-parameters so the caller can read values after
+// dlg->exec() == QDialog::Accepted. The "Add Staff" button's own validation
+// (required fields) is wired up inside the factory, same as before.
+QDialog *createAddStaffDialog(QWidget *parent,
+                               QLineEdit *&outUsernameEdit, QLineEdit *&outPasswordEdit,
+                               QComboBox *&outRoleBox, QLineEdit *&outIdEdit,
+                               QLineEdit *&outNameEdit, QLineEdit *&outAgeEdit,
+                               QComboBox *&outGenderBox, QLineEdit *&outPhoneEdit,
+                               QComboBox *&outStatusBox);
+
+QDialog *createEditStaffDialog(const StaffData &s, QWidget *parent,
+                                QLineEdit *&outUsernameEdit, QLineEdit *&outPasswordEdit,
+                                QComboBox *&outRoleBox, QLineEdit *&outNameEdit,
+                                QLineEdit *&outAgeEdit, QComboBox *&outGenderBox,
+                                QLineEdit *&outPhoneEdit, QComboBox *&outStatusBox);
 
 #endif // STAFFMANAGER_H
