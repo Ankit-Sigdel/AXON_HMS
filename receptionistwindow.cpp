@@ -127,7 +127,7 @@ void ReceptionistWindow::onViewAllAppointmentsClicked()
     qDebug() << "View All Appointments clicked!";
 }
 
-// --- Data Connections for PatientManager ---
+
 
 void ReceptionistWindow::populateAppointmentsTable()
 {
