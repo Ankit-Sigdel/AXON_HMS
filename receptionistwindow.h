@@ -2,6 +2,8 @@
 #define RECEPTIONISTWINDOW_H
 
 #include <QWidget>
+#include <QTimer>
+#include <QDateTime>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class ReceptionistWindow; }
@@ -26,6 +28,7 @@ private slots:
     void onViewAllAppointmentsClicked();
     void onClearFormClicked();
     void onSubmitRegistrationClicked();
+    void updateDateTime();
 
 private:
     Ui::ReceptionistWindow *ui;
@@ -35,6 +38,7 @@ private:
     void refreshDashboardData();
     void populateAppointmentsTable();
     void populateRecentPatientsTable();
+    QTimer *dateTimeTimer;
 };
 
 #endif // RECEPTIONISTWINDOW_H

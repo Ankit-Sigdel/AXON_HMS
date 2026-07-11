@@ -68,6 +68,12 @@ ReceptionistWindow::ReceptionistWindow(QWidget *parent)
             // 2. Close this receptionist window
             this->close();
         });
+    dateTimeTimer = new QTimer(this);
+    connect(dateTimeTimer, &QTimer::timeout, this, &ReceptionistWindow::updateDateTime);
+    dateTimeTimer->start(1000); // Ticks every 1 second
+
+    // Call it immediately so the label isn't blank on startup
+    updateDateTime();
 
 }
 
@@ -249,4 +255,12 @@ void ReceptionistWindow::onSubmitRegistrationClicked()
 
     // 5. CLEAR FORM
     onClearFormClicked();
+}
+void ReceptionistWindow::updateDateTime() {
+    QDateTime current = QDateTime::currentDateTime();
+
+    // Formats precisely to: "Sat Jul 11 2026, 09:27 PM"
+    QString dateText = current.toString("ddd MMM dd yyyy, hh:mm AP");
+
+    ui->dateLabel->setText(dateText);
 }
