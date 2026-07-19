@@ -16,6 +16,8 @@
 #include <QTableWidgetItem>
 #include <QStyledItemDelegate>
 #include <QKeyEvent>
+#include <QPushButton>
+#include <algorithm>
 
 
 namespace {
@@ -72,8 +74,12 @@ private:
 };
 
 //Standard fee-schedule template
-// The four service rows that always appear in "Current Bill Summary" —
-// Service and Description are fixed; only the Amount cell is editable.
+// The four service rows that appear in "Current Bill Summary" by default —
+// Service, Description, and Amount are all editable, so the receptionist can
+// rename them, retype the amount, or leave them as-is. The receptionist can
+// also add brand-new custom line items (see insertCustomBillingRow) and
+// remove any line item row. Only the Subtotal and Remaining Balance rows are
+// locked, since those are always derived automatically.
 struct ServiceTemplateRow { QString code; QString description; };
 
 const QVector<ServiceTemplateRow> kServiceTemplate = {
@@ -84,9 +90,11 @@ const QVector<ServiceTemplateRow> kServiceTemplate = {
     };
 
 const int kServiceRowCount = static_cast<int>(kServiceTemplate.size());
-const int kRowSubtotal     = kServiceRowCount;      // row 4
-const int kRowDeposit      = kServiceRowCount + 1;  // row 5
-const int kRowRemaining    = kServiceRowCount + 2;  // row 6
+// NOTE: The Subtotal / Deposit / Remaining Balance rows are always the last
+// three rows in the table, wherever the receptionist has added or removed
+// custom line items above them. They're located dynamically at
+// (rowCount()-3), (rowCount()-2), and (rowCount()-1) rather than via fixed
+// constants, since the number of line-item rows can now change at runtime.
 
 } // namespace
 
@@ -123,6 +131,32 @@ ReceptionistWindow::ReceptionistWindow(QWidget *parent)
     connect(ui->billingDiscountEdit, &QLineEdit::textChanged,
             this, [this](const QString &) { recomputeBillTotals(); });
     populateBillingServiceTemplate();
+
+    // 4b. Add/Remove line-item buttons for the billing table, so the
+    // receptionist isn't limited to the four default service rows.
+    QHBoxLayout *billingRowButtonsLayout = new QHBoxLayout();
+    QPushButton *btnAddBillingRow    = new QPushButton("+ Add Item", this);
+    QPushButton *btnRemoveBillingRow = new QPushButton("Remove Selected Item", this);
+    btnAddBillingRow->setObjectName("btnAddBillingRow");
+    btnRemoveBillingRow->setObjectName("btnRemoveBillingRow");
+    btnAddBillingRow->setCursor(Qt::PointingHandCursor);
+    btnRemoveBillingRow->setCursor(Qt::PointingHandCursor);
+    btnAddBillingRow->setStyleSheet(
+        "QPushButton{background-color:#0055a4;color:white;border:none;"
+        "border-radius:6px;font-weight:bold;padding:6px 14px;}"
+        "QPushButton:hover{background-color:#004488;}"
+        "QPushButton:pressed{background-color:#003366;}");
+    btnRemoveBillingRow->setStyleSheet(
+        "QPushButton{background-color:#fee2e2;color:#b91c1c;border:1px solid #fecaca;"
+        "border-radius:6px;font-weight:bold;padding:6px 14px;}"
+        "QPushButton:hover{background-color:#fecaca;}");
+    billingRowButtonsLayout->addWidget(btnAddBillingRow);
+    billingRowButtonsLayout->addWidget(btnRemoveBillingRow);
+    billingRowButtonsLayout->addStretch();
+    if (ui->billingSummaryLayout)
+        ui->billingSummaryLayout->addLayout(billingRowButtonsLayout);
+    connect(btnAddBillingRow, &QPushButton::clicked, this, &ReceptionistWindow::onAddBillingRowClicked);
+    connect(btnRemoveBillingRow, &QPushButton::clicked, this, &ReceptionistWindow::onRemoveBillingRowClicked);
 
     // 1. Create the menu
     QMenu *profileMenu = new QMenu(this);
@@ -576,11 +610,14 @@ void ReceptionistWindow::clearBillingPatientCard()
     ui->billingPatientGenderLabel->setText("Gender: —");
 }
 
-// Resets "Current Bill Summary" to the standard fee-schedule rows: Service
-// and Description are pre-filled and locked; only the Amount cell (column 2)
-// is editable. Subtotal / Deposit / Remaining Balance rows are appended
-// below — Subtotal and Remaining Balance are computed and locked, Deposit
-// stays editable so the receptionist can record an upfront deposit inline.
+// Resets "Current Bill Summary" to the standard fee-schedule rows. Service,
+// Description, and Amount are ALL editable now, so the receptionist can
+// rename a line item, correct the description, or just change the amount.
+// The receptionist can also add extra custom rows (onAddBillingRowClicked)
+// or delete any line item (onRemoveBillingRowClicked). Subtotal / Deposit /
+// Remaining Balance rows are appended below — Subtotal and Remaining
+// Balance are computed and locked, Deposit stays editable so the
+// receptionist can record an upfront deposit inline.
 void ReceptionistWindow::populateBillingServiceTemplate()
 {
     QTableWidget *t = ui->billingSummaryTable;
@@ -592,12 +629,11 @@ void ReceptionistWindow::populateBillingServiceTemplate()
         t->insertRow(row);
 
         QTableWidgetItem *serviceItem = new QTableWidgetItem(code);
-        serviceItem->setFlags(serviceItem->flags() & ~Qt::ItemIsEditable);
         QTableWidgetItem *descItem = new QTableWidgetItem(desc);
-        descItem->setFlags(descItem->flags() & ~Qt::ItemIsEditable);
         QTableWidgetItem *amountItem = new QTableWidgetItem("0.00");
-        amountItem->setFlags(amountItem->flags() | Qt::ItemIsEditable);
         amountItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        // Service, Description, and Amount are all left editable (default
+        // QTableWidgetItem flags already include Qt::ItemIsEditable).
 
         t->setItem(row, 0, serviceItem);
         t->setItem(row, 1, descItem);
@@ -641,11 +677,64 @@ void ReceptionistWindow::populateBillingServiceTemplate()
     t->blockSignals(false);
 }
 
+// Inserts a brand-new, fully-editable line item row just above the
+// Subtotal/Deposit/Remaining Balance rows. Used both by "+ Add Item" and
+// when loading an older bill that contains a custom charge not part of the
+// default four-row fee schedule.
+void ReceptionistWindow::insertCustomBillingRow(const QString &code, const QString &desc, double amount)
+{
+    QTableWidget *t = ui->billingSummaryTable;
+    int insertAt = std::max(0, t->rowCount() - 3); // just above the Subtotal row
+
+    t->blockSignals(true);
+    t->insertRow(insertAt);
+
+    QTableWidgetItem *serviceItem = new QTableWidgetItem(code);
+    QTableWidgetItem *descItem    = new QTableWidgetItem(desc);
+    QTableWidgetItem *amountItem  = new QTableWidgetItem(QString::number(amount, 'f', 2));
+    amountItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+
+    t->setItem(insertAt, 0, serviceItem);
+    t->setItem(insertAt, 1, descItem);
+    t->setItem(insertAt, 2, amountItem);
+
+    t->blockSignals(false);
+}
+
+// "+ Add Item" — lets the receptionist bill for something outside the
+// standard fee schedule (e.g. a one-off procedure or supply charge).
+void ReceptionistWindow::onAddBillingRowClicked()
+{
+    insertCustomBillingRow("New Item", "Description", 0.0);
+    recomputeBillTotals();
+}
+
+// "Remove Selected Item" — deletes whichever line item row is currently
+// selected. The Subtotal, Deposit, and Remaining Balance rows can't be
+// removed since they're always the derived summary at the bottom.
+void ReceptionistWindow::onRemoveBillingRowClicked()
+{
+    QTableWidget *t = ui->billingSummaryTable;
+    int row = t->currentRow();
+    int subtotalRow = t->rowCount() - 3;
+
+    if (row < 0 || row >= subtotalRow) {
+        QMessageBox::information(this, "Remove Item",
+                                 "Select a service line to remove first (the Subtotal, Deposit, "
+                                 "and Remaining Balance rows can't be deleted).");
+        return;
+    }
+
+    t->removeRow(row);
+    recomputeBillTotals();
+}
+
 // Fills a previously-generated bill's amounts into the template built by
-// populateBillingServiceTemplate(). Matches items back to template rows by
-// service code; any legacy item that doesn't match a known service is
-// simply skipped (this app's earlier billing flow used a single generic
-// "Service Charge" line, which predates this fixed fee-schedule table).
+// populateBillingServiceTemplate(). Matches items back to the default
+// template rows by service code where possible; any item that doesn't
+// match a known default service (e.g. a custom item the receptionist added
+// when the bill was generated) is inserted as its own editable row above
+// the summary section, so nothing gets silently dropped on reload.
 void ReceptionistWindow::loadBillIntoTable(const BillingRecord &bill)
 {
     populateBillingServiceTemplate();
@@ -654,14 +743,29 @@ void ReceptionistWindow::loadBillIntoTable(const BillingRecord &bill)
     t->blockSignals(true);
 
     for (const auto &item : bill.items) {
+        bool matched = false;
         for (int r = 0; r < kServiceRowCount; ++r) {
             if (kServiceTemplate[r].code.compare(item.serviceCode, Qt::CaseInsensitive) == 0) {
                 t->item(r, 2)->setText(QString::number(item.amount, 'f', 2));
+                matched = true;
                 break;
             }
         }
+        if (!matched) {
+            int insertAt = t->rowCount() - 3;
+            t->insertRow(insertAt);
+            QTableWidgetItem *serviceItem = new QTableWidgetItem(item.serviceCode);
+            QTableWidgetItem *descItem    = new QTableWidgetItem(item.description);
+            QTableWidgetItem *amountItem  = new QTableWidgetItem(QString::number(item.amount, 'f', 2));
+            amountItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+            t->setItem(insertAt, 0, serviceItem);
+            t->setItem(insertAt, 1, descItem);
+            t->setItem(insertAt, 2, amountItem);
+        }
     }
-    t->item(kRowDeposit, 2)->setText(QString::number(bill.depositPaid, 'f', 2));
+
+    const int depositRow = t->rowCount() - 2;
+    t->item(depositRow, 2)->setText(QString::number(bill.depositPaid, 'f', 2));
 
     t->blockSignals(false);
 
@@ -672,34 +776,44 @@ void ReceptionistWindow::loadBillIntoTable(const BillingRecord &bill)
     // Show the bill's actual stored Subtotal / Remaining Balance (which may
     // already reflect prior payments processed against it) rather than a
     // freshly recomputed value.
+    const int subtotalRow  = t->rowCount() - 3;
+    const int remainingRow = t->rowCount() - 1;
     t->blockSignals(true);
-    t->item(kRowSubtotal, 2)->setText(QString::number(bill.subtotal, 'f', 2));
-    t->item(kRowRemaining, 2)->setText(QString::number(bill.remainingBalance, 'f', 2));
+    t->item(subtotalRow, 2)->setText(QString::number(bill.subtotal, 'f', 2));
+    t->item(remainingRow, 2)->setText(QString::number(bill.remainingBalance, 'f', 2));
     t->blockSignals(false);
 }
 
-// Re-sums Subtotal (service rows) and Remaining Balance (Subtotal - Deposit
-// - Discount, floored at 0) whenever an editable Amount cell or the Discount
-// field changes. Guarded against re-entrancy since this method itself edits
-// table cells, which would otherwise re-trigger itemChanged.
+// Re-sums Subtotal (every line-item row) and Remaining Balance (Subtotal -
+// Deposit - Discount, floored at 0) whenever an editable Amount cell, a
+// Service/Description cell, the Discount field changes, or a row is
+// added/removed. The Subtotal/Deposit/Remaining Balance rows are always
+// located dynamically as the last three rows, so this keeps working no
+// matter how many line items the receptionist has added or removed.
+// Guarded against re-entrancy since this method itself edits table cells,
+// which would otherwise re-trigger itemChanged.
 void ReceptionistWindow::recomputeBillTotals()
 {
     if (m_updatingBillTable) return;
 
     QTableWidget *t = ui->billingSummaryTable;
-    if (t->rowCount() < kServiceRowCount + 3) return; // template not built yet
+    if (t->rowCount() < 3) return; // summary rows not built yet
+
+    const int subtotalRow  = t->rowCount() - 3;
+    const int depositRow   = t->rowCount() - 2;
+    const int remainingRow = t->rowCount() - 1;
 
     m_updatingBillTable = true;
     t->blockSignals(true);
 
     double subtotal = 0.0;
-    for (int r = 0; r < kServiceRowCount; ++r) {
+    for (int r = 0; r < subtotalRow; ++r) {
         if (QTableWidgetItem *it = t->item(r, 2))
             subtotal += it->text().trimmed().toDouble();
     }
 
     double deposit = 0.0;
-    if (QTableWidgetItem *dep = t->item(kRowDeposit, 2))
+    if (QTableWidgetItem *dep = t->item(depositRow, 2))
         deposit = dep->text().trimmed().toDouble();
 
     double discount = ui->billingDiscountEdit->text().trimmed().toDouble();
@@ -707,9 +821,9 @@ void ReceptionistWindow::recomputeBillTotals()
     double remaining = subtotal - deposit - discount;
     if (remaining < 0.0) remaining = 0.0;
 
-    if (QTableWidgetItem *sub = t->item(kRowSubtotal, 2))
+    if (QTableWidgetItem *sub = t->item(subtotalRow, 2))
         sub->setText(QString::number(subtotal, 'f', 2));
-    if (QTableWidgetItem *rem = t->item(kRowRemaining, 2))
+    if (QTableWidgetItem *rem = t->item(remainingRow, 2))
         rem->setText(QString::number(remaining, 'f', 2));
 
     t->blockSignals(false);
@@ -775,15 +889,21 @@ void ReceptionistWindow::onGenerateBillClicked()
     }
 
     QTableWidget *t = ui->billingSummaryTable;
+    const int subtotalRow = t->rowCount() - 3;
+    const int depositRow  = t->rowCount() - 2;
 
     QVector<BillItem> items;
-    for (int r = 0; r < kServiceRowCount; ++r) {
-        QTableWidgetItem *it = t->item(r, 2);
-        double amount = it ? it->text().trimmed().toDouble() : 0.0;
+    for (int r = 0; r < subtotalRow; ++r) {
+        QTableWidgetItem *amountCell = t->item(r, 2);
+        double amount = amountCell ? amountCell->text().trimmed().toDouble() : 0.0;
         if (amount > 0.0) {
+            QString code = t->item(r, 0) ? t->item(r, 0)->text().trimmed() : QString();
+            QString desc = t->item(r, 1) ? t->item(r, 1)->text().trimmed() : QString();
+            if (code.isEmpty()) code = "Item";
+
             BillItem bi;
-            bi.serviceCode = kServiceTemplate[r].code;
-            bi.description = kServiceTemplate[r].description;
+            bi.serviceCode = code;
+            bi.description = desc;
             bi.amount      = amount;
             items.append(bi);
         }
@@ -796,7 +916,7 @@ void ReceptionistWindow::onGenerateBillClicked()
     }
 
     double deposit = 0.0;
-    if (QTableWidgetItem *dep = t->item(kRowDeposit, 2))
+    if (QTableWidgetItem *dep = t->item(depositRow, 2))
         deposit = dep->text().trimmed().toDouble();
 
     double discount = ui->billingDiscountEdit->text().trimmed().toDouble();
@@ -809,9 +929,11 @@ void ReceptionistWindow::onGenerateBillClicked()
 
     // Reflect the authoritative stored Subtotal / Remaining Balance back
     // into the table (should already match what recomputeBillTotals showed).
+    const int newSubtotalRow  = t->rowCount() - 3;
+    const int newRemainingRow = t->rowCount() - 1;
     t->blockSignals(true);
-    t->item(kRowSubtotal, 2)->setText(QString::number(newBill.subtotal, 'f', 2));
-    t->item(kRowRemaining, 2)->setText(QString::number(newBill.remainingBalance, 'f', 2));
+    t->item(newSubtotalRow, 2)->setText(QString::number(newBill.subtotal, 'f', 2));
+    t->item(newRemainingRow, 2)->setText(QString::number(newBill.remainingBalance, 'f', 2));
     t->blockSignals(false);
 
     ui->billingNotesEdit->clear();
@@ -848,8 +970,9 @@ void ReceptionistWindow::onProcessPaymentClicked()
     BillingRecord updated = billingMgr->searchBill(currentBillId);
 
     QTableWidget *t = ui->billingSummaryTable;
+    const int remainingRow = t->rowCount() - 1;
     t->blockSignals(true);
-    t->item(kRowRemaining, 2)->setText(QString::number(updated.remainingBalance, 'f', 2));
+    t->item(remainingRow, 2)->setText(QString::number(updated.remainingBalance, 'f', 2));
     t->blockSignals(false);
 
     ui->billingAmountToPayEdit->clear();
