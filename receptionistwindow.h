@@ -43,6 +43,8 @@ private slots:
     void onGenerateBillClicked();
     void onProcessPaymentClicked();
     void recomputeBillTotals(); // re-sums Subtotal/Remaining Balance whenever a table cell or the Discount field changes
+    void onAddBillingRowClicked();    // inserts a new, fully-editable custom line item
+    void onRemoveBillingRowClicked(); // deletes the currently-selected line item row
 
 private:
     Ui::ReceptionistWindow *ui;
@@ -73,6 +75,7 @@ private:
     void clearBillingPatientCard();
     void populateBillingServiceTemplate();               // resets the table to the fixed service rows + Subtotal/Deposit/Remaining
     void loadBillIntoTable(const BillingRecord &bill);    // fills a previously-generated bill's amounts into the template
+    void insertCustomBillingRow(const QString &code, const QString &desc, double amount); // adds a fully-editable line item just above the summary rows
     QString selectedPaymentMode() const; // reads the checked Payment Mode radio button
 
     QTimer *dateTimeTimer;

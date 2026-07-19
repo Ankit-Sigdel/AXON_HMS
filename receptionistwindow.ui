@@ -2050,9 +2050,6 @@ QHeaderView::section{
     color:black;
 }</string>
                 </property>
-                <property name="editTriggers">
-                 <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
-                </property>
                 <property name="showGrid">
                  <bool>false</bool>
                 </property>
